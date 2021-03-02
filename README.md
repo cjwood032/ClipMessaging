@@ -1,0 +1,1 @@
+This is a program to allow me to transfer clipboard contents from one computer to another on my home network.
