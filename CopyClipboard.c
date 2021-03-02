@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if defined(_WIN64)||defined(_WIN32)
 #include <Windows.h>
 #include <winuser.h>
 //Copy this I guess?
@@ -29,3 +30,19 @@ int main()
     CloseClipboard();
     return 0;
 }
+#endif //we can't run this outside of windows...
+#if defined(__APPLE__)
+int copyToClipboard(const char *str);
+int main()
+{
+    copyToClipboard("Let us see if this works!");
+    return 0;
+}
+int copyToClipboard(const char *str)
+{
+    const char issued_cmd[] ="echo '%s' | pbcopy";
+    char cmd[strlen(str)+strlen(issued_cmd)-1];
+    sprintf(cmd,issued_cmd,str);
+    return system(cmd);
+}
+#endif //we can't run this outside of MACOS
