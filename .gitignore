@@ -2,3 +2,5 @@
 *.exe
 *.out
 *.stackdump
+.o
+.vscode/

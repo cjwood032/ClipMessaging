@@ -33,7 +33,7 @@
         CloseClipboard();
         free(output);
     }
-    int copyToClipboard(const char *str)
+    void copyToClipboard(const char *str)
     {
         const size_t len = strlen(str) + 1;
         HGLOBAL hMem =  GlobalAlloc(GMEM_MOVEABLE, len);
@@ -46,15 +46,45 @@
     }
 //we can't run this outside of windows...
 #elif defined(__APPLE__)
-
-    int copyToClipboard(const char *str)
+    void copyFromClipboard(char *head)
+    {
+        //This uses a temporary file to get the value of the clipboard.
+        //Once a better solution is found it will be implemented.
+        char c;
+        int inputSize=0;
+        int headerLength = 0;
+        char *output = NULL;
+        char buffer[100];
+        FILE *fpoint = NULL;
+        freopen("tempfile.txt","w+",stdout);
+        const char issued_cmd[] ="pbpaste";
+        char cmd[strlen(head)+strlen(issued_cmd)-1];
+        headerLength = strlen(head);
+        sprintf(cmd,issued_cmd);
+        system(cmd);
+        freopen("/dev/tty","w",stdout);
+        fpoint=fopen("tempfile.txt","r");
+        fseek(fpoint,0,SEEK_END);
+        inputSize = ftell(fpoint);
+         output = (char *)malloc((headerLength+inputSize)*sizeof(char));
+        rewind(fpoint);
+        fread(buffer,sizeof(char),inputSize,fpoint);
+        strcpy(output,head);
+        strcat(output,buffer);
+        printf("\nthe final output\n%s\n",output);
+        fclose(fpoint);
+        free(output);
+        remove("tempfile.txt");
+    }
+    void copyToClipboard(const char *str)
     {
         const char issued_cmd[] ="echo '%s' | pbcopy";
         char cmd[strlen(str)+strlen(issued_cmd)-1];
         sprintf(cmd,issued_cmd,str);
-        return system(cmd);
+        system(cmd);
     }
-#endif //we can't run this outside of MACOS
+    //we can't run this outside of MACOS
+#endif 
 int main()
 {
     copyFromClipboard("Worked ");
