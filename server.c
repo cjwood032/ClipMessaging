@@ -20,7 +20,7 @@ int bindCreatedSocket (int hsocket){
     iRetval = bind(hsocket,(struct sockaddr *) &remote, sizeof(remote));
     return iRetval;
 }
-int main(int argc, char *argv[])
+ serverReceive(void)
 {
     int socket_desc=0, sock=0, clientLen=0;
     struct sockaddr_in client;
@@ -76,5 +76,4 @@ int main(int argc, char *argv[])
         close(sock);
         sleep(1);
     }
-    return 0;
 }

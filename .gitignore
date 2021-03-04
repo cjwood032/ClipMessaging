@@ -4,3 +4,5 @@
 *.stackdump
 .o
 .vscode/
+secrets.h
+secret.c

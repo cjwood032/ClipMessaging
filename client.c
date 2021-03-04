@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include "secrets.h"
+#include "client.h"
 short socketCreate(void) 
 {
     short hSocket;
@@ -11,12 +13,26 @@ short socketCreate(void)
     hSocket = socket(AF_INET,SOCK_STREAM,0);
     return hSocket;
 }
-int socketConnect(int hSocket)
+int socketConnect(int hSocket,int target)
 {
+    //1 is tower, 2 is mac, 3 is new laptop
     int iRetval=-1;
-    int ServerPort = 54321;
+    int ServerPort = SERVERPORT;
     struct sockaddr_in remote= {0};
-    remote.sin_addr.s_addr = inet_addr("192.168.1.12");
+    remote.sin_addr.s_addr = inet_addr("127.0.0.1");//an internal default
+    if(target==1)
+    {
+        remote.sin_addr.s_addr = inet_addr(TDSIP);
+    }
+    else if (target==2)
+    {
+        remote.sin_addr.s_addr = inet_addr(MACIP);
+    }
+    else if (target==3)
+    {
+        remote.sin_addr.s_addr = inet_addr(TLSIP);
+    }
+    
     remote.sin_family=AF_INET;
     remote.sin_port = htons(ServerPort);
     iRetval = connect(hSocket, (struct sockaddr *)&remote,sizeof(struct sockaddr_in));
@@ -51,7 +67,7 @@ int socketReceive(int hSocket, char* Rsp, short RvcSize)
     printf("Response %s\n",Rsp);
     return shortRetval;
 }
-int main(int argc, char *argv[])
+void sendToClient(int selection)
 {
     int hSocket=0, read_size=9;
     struct sockaddr_in server;
@@ -64,7 +80,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     printf("Socket is created\n");
-    if(socketConnect(hSocket)<0)
+    if(socketConnect(hSocket,selection)<0)
     {
         perror("connect failed.\n");
         return 1;
@@ -76,5 +92,5 @@ int main(int argc, char *argv[])
     read_size = socketReceive(hSocket, server_reply, 200);
     printf("Server Response : %s\n", server_reply);
     close(hSocket);
-    return 0;
+    
 }
