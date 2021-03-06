@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #if defined(__WINDOWS__)||defined(_WIN32)||defined(__CYGWIN__)
     #include <Windows.h>
     #include <winuser.h>
@@ -10,28 +11,23 @@
     multiline example
     to test
     */
-    void copyFromClipboard(char *head)
+    char * copyFromClipboard()
     {
-        char *output=NULL;
         int length=0;
-        
         OpenClipboard(0);
         HGLOBAL hglb;
         hglb =GetClipboardData(CF_TEXT);
         if(hglb!=NULL)
         {
-            length=strlen((char*)hglb)+strlen(head);
-            output = (char *)malloc(length * sizeof(char));
-            strcpy(output,head);
-            strcat(output,(char*)hglb);
+            CloseClipboard();
+            return (char*)hglb;
         }
         else
         {
             printf("The clipboard was empty\n");
+            CloseClipboard();
+            return 0;
         }
-        printf("the final output\n%s\n",output);
-        CloseClipboard();
-        free(output);
     }
     void copyToClipboard(const char *str)
     {
@@ -46,7 +42,7 @@
     }
 //we can't run this outside of windows...
 #elif defined(__APPLE__)
-    void copyFromClipboard(char *head)
+    char * copyFromClipboard(char *head)
     {
         //This uses a temporary file to get the value of the clipboard.
         //Once a better solution is found it will be implemented.
@@ -85,10 +81,15 @@
     }
     //we can't run this outside of MACOS
 #endif 
+/*
 int main()
 {
-    copyFromClipboard("Worked ");
+    
+    char * output = copyFromClipboard();
+    printf("output from main \n%s\n",output);
     copyToClipboard("This is only a test,\ndo not adjust your television set");
-    copyFromClipboard("Worked ");
+    //copyFromClipboard("Worked ");
+    //free(output);
     return 0;
 }
+*/

@@ -4,5 +4,5 @@
 //int socketConnect(int hSocket,int target);
 //int socketSend(int hSocket, char* Rqst, short lenRqst);
 //int socketReceive(int hSocket, char* Rsp, short RvcSize);
-void sendToClient(int selection);
+void *sendToClient(int selection);
 #endif

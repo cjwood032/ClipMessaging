@@ -6,16 +6,17 @@
 #include <unistd.h>
 #include "secrets.h"
 #include "client.h"
-short socketCreate(void) 
+#include "CopyClipboard.h"
+short clientSocketCreate(void) 
 {
     short hSocket;
     printf("Create the socket\n");
     hSocket = socket(AF_INET,SOCK_STREAM,0);
     return hSocket;
 }
-int socketConnect(int hSocket,int target)
+int clientSocketConnect(int hSocket,int target)
 {
-    //1 is tower, 2 is mac, 3 is new laptop
+    //1 is tower, 2 is mac, 3 is new laptop default to self for testing
     int iRetval=-1;
     int ServerPort = SERVERPORT;
     struct sockaddr_in remote= {0};
@@ -38,7 +39,7 @@ int socketConnect(int hSocket,int target)
     iRetval = connect(hSocket, (struct sockaddr *)&remote,sizeof(struct sockaddr_in));
     return iRetval;
 }
-int socketSend(int hSocket, char* Rqst, short lenRqst)
+int clientSocketSend(int hSocket, char* Rqst, short lenRqst)
 {
     int shortRetval = -1;
     struct timeval tv;
@@ -52,7 +53,8 @@ int socketSend(int hSocket, char* Rqst, short lenRqst)
     shortRetval=send(hSocket, Rqst, lenRqst, 0);
     return shortRetval;
 }
-int socketReceive(int hSocket, char* Rsp, short RvcSize)
+/*
+int clientSocketReceive(int hSocket, char* Rsp, short RvcSize)
 {
     int shortRetval = -1;
     struct timeval tv;
@@ -67,30 +69,29 @@ int socketReceive(int hSocket, char* Rsp, short RvcSize)
     printf("Response %s\n",Rsp);
     return shortRetval;
 }
-void sendToClient(int selection)
+*/
+void *sendToClient(int selection)
 {
     int hSocket=0, read_size=9;
     struct sockaddr_in server;
-    char sendToServer[100] = {0};
+    
     char server_reply[200] = {0};
-    hSocket = socketCreate();
+    hSocket = clientSocketCreate();
     if(hSocket ==-1)
     {
         printf("Could not create socket\n");
-        return 1;
+        return NULL;
     }
     printf("Socket is created\n");
-    if(socketConnect(hSocket,selection)<0)
+    if(clientSocketConnect(hSocket,selection)<0)
     {
         perror("connect failed.\n");
-        return 1;
+        return NULL;
     }
-    printf("Successfully connected with server\n");
-    printf("enter the message:");
-    fgets(sendToServer, 100, stdin);
-    socketSend(hSocket,sendToServer, strlen(sendToServer));
-    read_size = socketReceive(hSocket, server_reply, 200);
-    printf("Server Response : %s\n", server_reply);
+    char *sendToServer = copyFromClipboard();
+    clientSocketSend(hSocket,sendToServer, strlen(sendToServer));
+    //read_size = socketReceive(hSocket, server_reply, 200);
+    //printf("Server Response : %s\n", server_reply);
     close(hSocket);
     
 }
