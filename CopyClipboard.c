@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #if defined(__WINDOWS__)||defined(_WIN32)||defined(__CYGWIN__)
     #include <Windows.h>
     #include <winuser.h>
@@ -42,35 +41,30 @@
     }
 //we can't run this outside of windows...
 #elif defined(__APPLE__)
-    char * copyFromClipboard(char *head)
+    char * copyFromClipboard(char * output)
     {
         //This uses a temporary file to get the value of the clipboard.
         //Once a better solution is found it will be implemented.
         char c;
         int inputSize=0;
-        int headerLength = 0;
-        char *output = NULL;
-        char buffer[100];
         FILE *fpoint = NULL;
         freopen("tempfile.txt","w+",stdout);
         const char issued_cmd[] ="pbpaste";
-        char cmd[strlen(head)+strlen(issued_cmd)-1];
-        headerLength = strlen(head);
+        char cmd[strlen(issued_cmd)-1];
         sprintf(cmd,issued_cmd);
         system(cmd);
         freopen("/dev/tty","w",stdout);
         fpoint=fopen("tempfile.txt","r");
         fseek(fpoint,0,SEEK_END);
         inputSize = ftell(fpoint);
-         output = (char *)malloc((headerLength+inputSize)*sizeof(char));
+        char buffer[inputSize];
         rewind(fpoint);
-        fread(buffer,sizeof(char),inputSize,fpoint);
-        strcpy(output,head);
-        strcat(output,buffer);
-        printf("\nthe final output\n%s\n",output);
+        fread(output,sizeof(char),inputSize,fpoint);
         fclose(fpoint);
-        free(output);
         remove("tempfile.txt");
+        //output = buffer;
+        printf("%s\n",output);
+        return output;
     }
     void copyToClipboard(const char *str)
     {
@@ -81,15 +75,14 @@
     }
     //we can't run this outside of MACOS
 #endif 
-/*
+
 int main()
 {
-    
-    char * output = copyFromClipboard();
+    char * output;
+    output = copyFromClipboard(output);
     printf("output from main \n%s\n",output);
-    copyToClipboard("This is only a test,\ndo not adjust your television set");
+    //copyToClipboard("This is only a test,\ndo not adjust your television set");
     //copyFromClipboard("Worked ");
     //free(output);
     return 0;
 }
-*/
