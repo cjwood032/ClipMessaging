@@ -47,7 +47,7 @@ void* sendProgramme()
         }
     }
     while (atoi(option));
-    
+    return NULL;
 }
 void*  sendAndReceiveProgramme()
 {
