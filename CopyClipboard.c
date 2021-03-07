@@ -75,7 +75,7 @@
     }
     //we can't run this outside of MACOS
 #endif 
-
+/*
 int main()
 {
     char * output;
@@ -86,3 +86,4 @@ int main()
     //free(output);
     return 0;
 }
+*/
