@@ -9,16 +9,17 @@ void* sendProgramme();
 void* sendAndReceiveProgramme();
 int main()
 {
-    char option[1];
+    char option[5];
     puts("Would you like to do:\n   1. Only send\n   2. Only receive\n   3. Both\n   0. exit");
-    fgets(option, 1, stdin);
+    fgets(option, 5, stdin);
     switch (atoi(option))
     {
     case 1:
         sendProgramme();
         break;
     case 2:
-        receiveProgramme();
+        serverReceive();
+        //receiveProgramme();
         break;
     case 3:
         sendAndReceiveProgramme();
@@ -31,11 +32,11 @@ int main()
 }
 void* sendProgramme()
 {
-    char option[1];
-    while (atoi(option))
+    char option[5];
+    do
     {   //1 is tower, 2 is mac, 3 is new laptop
         puts("Choose a device to send to (make sure the content is in the clipboard)\n   1. TheDarkSide\n   2. MacBook\n   3. TheLightSide\n   4. TheLinuxSide\n   0. Exit");
-        fgets(option, 1, stdin);
+        fgets(option, 5, stdin);
         if(atoi(option))
         {
             sendToClient(atoi(option));
@@ -44,8 +45,8 @@ void* sendProgramme()
         {
             break;
         }
-        
     }
+    while (atoi(option));
     
 }
 void*  sendAndReceiveProgramme()

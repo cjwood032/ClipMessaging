@@ -5,16 +5,10 @@
 #include <string.h>
 #include "CopyClipboard.h"
 #include <pthread.h>
-//windows sleeps in ms so we need to sleep longer
-#if defined(__WINDOWS__)||defined(_WIN32)||defined(__CYGWIN__)
-    #define WINMULTIPLIER 1000
-#else
-    #define WINMULTIPLIER 1
-#endif
+#include "server.h"
 pthread_mutex_t lock;
 short socketCreate(void) {
     short hSocket;
-    printf("Create the socket");
     hSocket=socket(AF_INET, SOCK_STREAM,0);
     return hSocket;
 }
@@ -43,13 +37,11 @@ void * serverReceive()
         printf("couldn't create socket\n");
         return NULL;
     }
-    printf("socket created\n");
     if (bindCreatedSocket(socket_desc)<0)
     {
         perror("bind failed.\n");
         return NULL;
     }
-    printf("bind done\n");
     listen(socket_desc,3);
     while(!received)
     {
@@ -71,6 +63,7 @@ void * serverReceive()
         }
         else
         {
+            printf("Copying...\n");
             copyToClipboard(client_message);
             received=1;
         }
@@ -104,8 +97,8 @@ void* receiveProgramme()
     }
     pthread_create(&threadServer, NULL, serverReceive, NULL);
     pthread_create(&threadMonitor, NULL, monitorServer, NULL);
-    pthread_join(threadMonitor, NULL);
-    pthread_join(threadServer,NULL);
+    //pthread_join(threadMonitor, NULL);
+    //pthread_join(threadServer,NULL);
     pthread_exit(NULL);
     return NULL;
 }
