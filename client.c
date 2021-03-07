@@ -93,5 +93,5 @@ void *sendToClient(int selection)
     //read_size = socketReceive(hSocket, server_reply, 200);
     //printf("Server Response : %s\n", server_reply);
     close(hSocket);
-    
+    return NULL;
 }
