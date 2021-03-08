@@ -16,26 +16,38 @@ short clientSocketCreate(void)
 }
 int clientSocketConnect(int hSocket,int target)
 {
+    
     //1 is tower, 2 is mac, 3 is new laptop default to self for testing
     int iRetval=-1;
     int ServerPort = SERVERPORT;
     struct sockaddr_in remote= {0};
-    remote.sin_addr.s_addr = inet_addr("127.0.0.1");//an internal default
+    //an internal default
     if(target==1)
     {
         remote.sin_addr.s_addr = inet_addr(TDSIP);
+        remote.sin_family=AF_INET;
+        remote.sin_port = htons(ServerPort);
     }
     else if (target==2)
     {
         remote.sin_addr.s_addr = inet_addr(MACIP);
+        remote.sin_family=AF_INET;
+        remote.sin_port = htons(ServerPort);
     }
     else if (target==3)
     {
         remote.sin_addr.s_addr = inet_addr(TLSIP);
+        remote.sin_family=AF_INET;
+        remote.sin_port = htons(ServerPort);
+    }
+    else
+    {
+        remote.sin_addr.s_addr = inet_addr("198.168.1.13");
+        remote.sin_family=AF_INET;
+        remote.sin_port = htons(ServerPort);
     }
     
-    remote.sin_family=AF_INET;
-    remote.sin_port = htons(ServerPort);
+    
     iRetval = connect(hSocket, (struct sockaddr *)&remote,sizeof(struct sockaddr_in));
     return iRetval;
 }
@@ -93,5 +105,6 @@ void *sendToClient(int selection)
     //read_size = socketReceive(hSocket, server_reply, 200);
     //printf("Server Response : %s\n", server_reply);
     close(hSocket);
+    printf("Successfully transferred clipboard contents\n");
     return NULL;
 }

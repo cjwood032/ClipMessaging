@@ -53,7 +53,7 @@ void*  sendAndReceiveProgramme()
 {
     //Set up 2 threads one for send and one for receive. 
     pthread_t threadServer, threadClient;
-    pthread_create(&threadServer, NULL, receiveProgramme, NULL);
+    pthread_create(&threadServer, NULL, serverReceive, NULL);
     pthread_create(&threadClient, NULL, sendProgramme, NULL);
     pthread_join(threadClient, NULL);
     pthread_join(threadServer,NULL);
