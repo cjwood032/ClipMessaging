@@ -4,8 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "CopyClipboard.h"
-#include <pthread.h>
+//#include <pthread.h>
 #include "server.h"
+#include "secrets.h"
 pthread_mutex_t lock;
 short socketCreate(void) {
     short hSocket;
@@ -14,7 +15,7 @@ short socketCreate(void) {
 }
 int bindCreatedSocket (int hsocket){
     int iRetval=-1;
-    int clientPort = 12345;
+    int clientPort = SERVERPORT;
     struct sockaddr_in remote = {0};
     remote.sin_family=AF_INET;
     remote.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -69,14 +70,17 @@ void * serverReceive()
         }
         close(sock);
         sleep(1*WINMULTIPLIER);
+        /*
         if(pthread_mutex_trylock(&lock)==0)
         {
             received=1;
         }
+        */
 
     }
     return NULL;
 }
+/*
 void* monitorServer()
 {
     char exit[10];
@@ -102,3 +106,4 @@ void* receiveProgramme()
     pthread_exit(NULL);
     return NULL;
 }
+*/

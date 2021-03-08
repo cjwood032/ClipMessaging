@@ -21,7 +21,6 @@ int clientSocketConnect(int hSocket,int target)
     int iRetval=-1;
     int ServerPort = SERVERPORT;
     struct sockaddr_in remote= {0};
-    //an internal default
     if(target==1)
     {
         remote.sin_addr.s_addr = inet_addr(TDSIP);
@@ -65,23 +64,6 @@ int clientSocketSend(int hSocket, char* Rqst, short lenRqst)
     shortRetval=send(hSocket, Rqst, lenRqst, 0);
     return shortRetval;
 }
-/*
-int clientSocketReceive(int hSocket, char* Rsp, short RvcSize)
-{
-    int shortRetval = -1;
-    struct timeval tv;
-    tv.tv_sec = 10;
-    tv.tv_usec=0;
-    if (setsockopt(hSocket, SOL_SOCKET, SO_RCVTIMEO, (char*)&tv,sizeof(tv))<0)
-    {
-        printf("Time Out\n");
-        return -1;
-    }
-    shortRetval = recv(hSocket, Rsp, RvcSize, 0);
-    printf("Response %s\n",Rsp);
-    return shortRetval;
-}
-*/
 void *sendToClient(int selection)
 {
     int hSocket=0, read_size=9;
@@ -102,9 +84,7 @@ void *sendToClient(int selection)
     }
     char *sendToServer = copyFromClipboard();
     clientSocketSend(hSocket,sendToServer, strlen(sendToServer));
-    //read_size = socketReceive(hSocket, server_reply, 200);
-    //printf("Server Response : %s\n", server_reply);
     close(hSocket);
-    printf("Successfully transferred clipboard contents\n");
+    printf("Successfully transferred clipboard contents\n\n");
     return NULL;
 }

@@ -3,14 +3,14 @@
 #include "CopyClipboard.h"
 #include <stdio.h>
 #include <string.h>
-#include <pthread.h>
+//#include <pthread.h>
 #include <stdlib.h>
 void* sendProgramme();
 void* sendAndReceiveProgramme();
 int main()
 {
     char option[5];
-    puts("Would you like to do:\n   1. Only send\n   2. Only receive\n   3. Both\n   0. exit");
+    puts("Would you like to do:\n   1. Send\n   2. Receive\n   0. exit");
     fgets(option, 5, stdin);
     switch (atoi(option))
     {
@@ -21,9 +21,11 @@ int main()
         serverReceive();
         //receiveProgramme();
         break;
+    /*
     case 3:
         sendAndReceiveProgramme();
         break;
+    */
     default:
         return 0;
         break;
@@ -35,7 +37,7 @@ void* sendProgramme()
     char option[5];
     do
     {   //1 is tower, 2 is mac, 3 is new laptop
-        puts("Choose a device to send to (make sure the content is in the clipboard)\n   1. TheDarkSide\n   2. MacBook\n   3. TheLightSide\n   4. TheLinuxSide\n   0. Exit");
+        puts("Choose a device to send to (make sure the content is in the clipboard)\n   1. TheDarkSide\n   2. MacBook\n   3. TheLightSide\n   0. Exit");
         fgets(option, 5, stdin);
         if(atoi(option))
         {
@@ -49,6 +51,7 @@ void* sendProgramme()
     while (atoi(option));
     return NULL;
 }
+/*
 void*  sendAndReceiveProgramme()
 {
     //Set up 2 threads one for send and one for receive. 
@@ -59,3 +62,4 @@ void*  sendAndReceiveProgramme()
     pthread_join(threadServer,NULL);
     pthread_exit(NULL);
 }
+*/

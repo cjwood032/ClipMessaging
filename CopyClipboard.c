@@ -57,12 +57,10 @@
         fpoint=fopen("tempfile.txt","r");
         fseek(fpoint,0,SEEK_END);
         inputSize = ftell(fpoint);
-        char buffer[inputSize];
         rewind(fpoint);
         fread(output,sizeof(char),inputSize,fpoint);
         fclose(fpoint);
         remove("tempfile.txt");
-        //output = buffer;
         printf("%s\n",output);
         return output;
     }
@@ -74,6 +72,38 @@
         system(cmd);
     }
     //we can't run this outside of MACOS
+  #else //catchall for linux devices
+  char * copyFromClipboard(char * output)
+    {
+        //This uses a temporary file to get the value of the clipboard.
+        //Once a better solution is found it will be implemented.
+        char c;
+        int inputSize=0;
+        FILE *fpoint = NULL;
+        const char issued_cmd[] ="xclip -selection clipboard -o > tempfile.txt";
+        char cmd[strlen(issued_cmd)-1];
+        sprintf(cmd,issued_cmd);
+        system(cmd);
+        fpoint=fopen("tempfile.txt","r");
+        fseek(fpoint,0,SEEK_END);
+        inputSize = ftell(fpoint);
+        char buffer[inputSize];
+        printf("got char length from file\n");
+        rewind(fpoint);
+        fread(buffer,(size_t)sizeof(char),(size_t)inputSize,fpoint);
+        puts("read into output");
+        fclose(fpoint);
+        remove("tempfile.txt");
+        output = buffer;
+        return output;
+    }
+    void copyToClipboard(const char *str)
+    {
+        const char issued_cmd[] ="echo '%s' | xclip -selection clipboard";
+        char cmd[strlen(str)+strlen(issued_cmd)-1];
+        sprintf(cmd,issued_cmd,str);
+        system(cmd);
+    }  
 #endif 
 /*
 int main()
@@ -81,9 +111,9 @@ int main()
     char * output;
     output = copyFromClipboard(output);
     printf("output from main \n%s\n",output);
-    //copyToClipboard("This is only a test,\ndo not adjust your television set");
+    copyToClipboard("This is only a test,\ndo not adjust your television set");
     //copyFromClipboard("Worked ");
-    //free(output);
+    
     return 0;
 }
 */
